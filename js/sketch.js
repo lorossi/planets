@@ -1,17 +1,17 @@
 class Sketch extends Engine {
   preload() {
     this._duration = 600; // animation duration
-    this._columns = 4; // number of rows of galaxies
+    this._columns = 4; // number of rows of planets
   }
 
   setup() {
-    this._galaxies = [];
-    const galaxy_scl = this.width / this._columns;
+    this._planets = [];
+    const planet_scl = this.width / this._columns;
 
     for (let x = 0; x < this._columns; x++) {
       for (let y = 0; y < this._columns; y++) {
-        this._galaxies.push(
-          new Galaxy(x * galaxy_scl, y * galaxy_scl, galaxy_scl)
+        this._planets.push(
+          new Planet(x * planet_scl, y * planet_scl, planet_scl)
         );
       }
     }
@@ -22,8 +22,9 @@ class Sketch extends Engine {
   draw() {
     const percent = (this.frameCount % this._duration) / this._duration;
 
+    // TODO make a better background. Some stars maybe?
     this.background("#000f2b");
-    this._galaxies.forEach((g) => g.update(percent));
-    this._galaxies.forEach((g) => g.show(this.ctx));
+    this._planets.forEach((p) => p.update(percent));
+    this._planets.forEach((p) => p.show(this.ctx));
   }
 }
