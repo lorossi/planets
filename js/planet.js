@@ -9,12 +9,12 @@ class Planet {
     this._simplex = new SimplexNoise();
 
     // border of the rectangle containing the galaxy
-    this._border = 0.25;
+    this._border = 0.4;
     // simplex noise scale
     this._cloud_noise_scl = random(0.015, 0.005);
     this._land_noise_scl = random(0.01, 0.0025);
 
-    this._moons_number = random_int(0, 4);
+    this._moons_number = random_int(1, 5);
 
     // planet radius
     this._r = (this._size / 2) * (1 - this._border);
@@ -39,7 +39,8 @@ class Planet {
 
     ctx.fillStyle = this._pattern;
     ctx.fillRect(0, 0, this._size, this._size);
-    ctx.strokeStyle = "rgb(255, 255, 255, 0.5)";
+    ctx.strokeWidth = 4;
+    ctx.strokeStyle = "rgb(255, 255, 255, 0.5)"; // TODO improve this
     ctx.beginPath();
     ctx.arc(this._size / 2, this._size / 2, this._r, 0, Math.PI * 2);
     ctx.stroke();
@@ -61,7 +62,7 @@ class Planet {
   // generate some moons for this planet
   _generateMoons() {
     for (let i = 0; i < this._moons_number; i++) {
-      const moon_channel = random(50, 200);
+      const moon_channel = random(70, 200);
       const moon_color = `rgb(${moon_channel}, ${moon_channel}, ${moon_channel})`;
       this._moons.push(new Moon(this._size * (1 - this._border), moon_color));
     }
@@ -226,6 +227,7 @@ class Moon {
     ctx.translate(x, 0);
 
     ctx.fillStyle = this._fill;
+    ctx.strokeWidth = 4;
     ctx.strokeStyle = "rgba(220, 220, 220, 0.5)"; // TODO improve this
     ctx.beginPath();
     ctx.arc(0, 0, r, 0, Math.PI * 2);

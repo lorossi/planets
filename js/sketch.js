@@ -1,7 +1,7 @@
 class Sketch extends Engine {
   preload() {
     this._duration = 600; // animation duration
-    this._columns = 4; // number of columns of planets
+    this._columns = 3; // number of columns of planets
   }
 
   setup() {
