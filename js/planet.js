@@ -96,7 +96,7 @@ class Planet {
             land_hue,
             ctx
           );
-          this._generateCloud(x, y, particles_scl, cloud_threshold, ctx);
+          this._generateClouds(x, y, particles_scl, cloud_threshold, ctx);
         }
       }
     }
@@ -137,10 +137,10 @@ class Planet {
     ctx.fillRect(x, y, scl, scl);
   }
 
-  _generateCloud(x, y, scl, threshold, ctx) {
+  _generateClouds(x, y, scl, threshold, ctx) {
     // clouds noise parameters
     const cloud_octaves = 3;
-    const cloud_persistence = 0.75;
+    const cloud_persistence = 0.85;
     const cloud_lacunarity = 2.2;
 
     const cloud = this._generateNoise(

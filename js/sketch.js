@@ -2,6 +2,7 @@ class Sketch extends Engine {
   preload() {
     this._duration = 600; // animation duration
     this._columns = 3; // number of columns of planets
+    this._stars_num = 250;
   }
 
   setup() {
@@ -16,14 +17,26 @@ class Sketch extends Engine {
       }
     }
 
+    this._stars = [];
+
+    for (let i = 0; i < this._stars_num; i++) {
+      const x = Math.random() * this.width;
+      const y = Math.random() * this.height;
+
+      this._stars.push(new Star(x, y, this._duration));
+    }
+
     this._start = this.frameCount;
   }
 
   draw() {
     const percent = (this.frameCount % this._duration) / this._duration;
 
-    // TODO make a better background. Some stars maybe?
     this.background("#000f2b");
+
+    this._stars.forEach((s) => s.update(percent));
+    this._stars.forEach((s) => s.show(this.ctx));
+
     this._planets.forEach((p) => p.update(percent));
     this._planets.forEach((p) => p.show(this.ctx));
   }
