@@ -22,7 +22,7 @@ class Planet {
     // moons!
     this._moons = [];
     this._generateMoons();
-
+    // texturize
     this._pattern = null;
     this._generatePattern();
   }
@@ -39,12 +39,6 @@ class Planet {
 
     ctx.fillStyle = this._pattern;
     ctx.fillRect(0, 0, this._size, this._size);
-    ctx.strokeWidth = 4;
-    ctx.strokeStyle = "rgb(255, 255, 255, 0.5)"; // TODO improve this
-    ctx.beginPath();
-    ctx.arc(this._size / 2, this._size / 2, this._r, 0, Math.PI * 2);
-    ctx.stroke();
-
     ctx.restore();
 
     // draw the moons
@@ -63,8 +57,7 @@ class Planet {
   _generateMoons() {
     for (let i = 0; i < this._moons_number; i++) {
       const moon_channel = random(70, 200);
-      const moon_color = `rgb(${moon_channel}, ${moon_channel}, ${moon_channel})`;
-      this._moons.push(new Moon(this._size * (1 - this._border), moon_color));
+      this._moons.push(new Moon(this._size * (1 - this._border), moon_channel));
     }
   }
 
@@ -89,7 +82,7 @@ class Planet {
     // particles (cloud and land)
     const particles_scl = 1;
     const cloud_threshold = random(0.25, 1);
-    const land_threshold = random(-1, 1);
+    const land_threshold = random(-0.75, 1);
     const land_hue = random_int(180);
 
     for (let x = 0; x < this._size; x += particles_scl) {
@@ -107,6 +100,12 @@ class Planet {
         }
       }
     }
+
+    ctx.strokeWidth = 4;
+    ctx.strokeStyle = "rgb(255, 255, 255, 0.5)"; // TODO improve this
+    ctx.beginPath();
+    ctx.arc(this._size / 2, this._size / 2, this._r, 0, Math.PI * 2);
+    ctx.stroke();
 
     // export pattern
     this._pattern = ctx.createPattern(canvas, "no-repeat");
@@ -174,23 +173,28 @@ class Planet {
 
 class Moon {
   constructor(size, color) {
+    this._size = size;
+    this._color = color;
+
     // ratio between planet and moon size
     const scl_factor = random(6, 20);
     this._r = size / scl_factor;
     // some approximation for the orbit size
     this._orbit_size = size + 2 * this._r;
-    this._fill = color;
     // when should the planet start appearing or disappearing?
     this._disappearing_edge = random(0.05, 0.1);
 
     this._theta = Math.random() * Math.PI * 2;
+
     this._start_x = Math.random();
     this._x = 0;
     this._hidden = true;
     // number of orbits in the total animation duration
     this._orbits = random_int(1, 3);
 
-    // TODO texturize with some craters
+    // texturize
+    this._pattern = null;
+    this._generatePattern();
   }
 
   update(percent) {
@@ -209,11 +213,11 @@ class Moon {
     // calculation to shrink/enlarge the moon when close to the planet's border
     if (real_percent < this._disappearing_edge) {
       const x = real_percent / this._disappearing_edge; // [0, 0.05] -> [0, 1]
-      this._current_r = this._easeIn(x) * this._r;
+      this._current_size = this._easeIn(x);
     } else if (real_percent > 1 - this._disappearing_edge) {
       const x = (1 - real_percent) / this._disappearing_edge; // [0.95, 1] -> [0, 1]
-      this._current_r = this._easeOut(x) * this._r;
-    } else this._current_r = this._r;
+      this._current_size = this._easeOut(x);
+    } else this._current_size = 1;
   }
 
   show(ctx) {
@@ -221,18 +225,19 @@ class Moon {
 
     // rounding for better performance
     const x = Math.floor(this._x);
-    const r = Math.floor(this._current_r);
+    const d_pos = Math.floor(this._size / 2);
 
     ctx.save();
-    ctx.translate(x, 0);
+    ctx.translate(-d_pos + x, -d_pos);
 
-    ctx.fillStyle = this._fill;
-    ctx.strokeWidth = 4;
-    ctx.strokeStyle = "rgba(220, 220, 220, 0.5)"; // TODO improve this
-    ctx.beginPath();
-    ctx.arc(0, 0, r, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
+    if (this._current_size < 1) {
+      ctx.translate(d_pos, d_pos);
+      ctx.scale(this._current_size, this._current_size);
+      ctx.translate(-d_pos, -d_pos);
+    }
+
+    ctx.fillStyle = this._pattern;
+    ctx.fillRect(0, 0, this._size, this._size);
 
     ctx.restore();
   }
@@ -243,6 +248,74 @@ class Moon {
 
   _easeOut(x) {
     return Math.sin((x * Math.PI) / 2);
+  }
+
+  _generatePattern() {
+    // create elements
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    // set canvas size
+    canvas.width = this._size;
+    canvas.height = this._size;
+
+    // draw a circle
+    ctx.fillStyle = `rgb(${this._color}, ${this._color}, ${this._color})`;
+    ctx.strokeWidth = 4;
+    ctx.strokeStyle = "rgba(220, 220, 220, 0.5)"; // TODO improve this
+
+    ctx.beginPath();
+    ctx.arc(this._size / 2, this._size / 2, this._r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // add some craters
+    this._generateCraters(ctx);
+
+    // export pattern
+    this._pattern = ctx.createPattern(canvas, "no-repeat");
+  }
+
+  // add craters to pattern
+  _generateCraters(ctx) {
+    const num = random_int(0, 6);
+    const TRIES = 100;
+    const MIN_R = this._r / 6;
+    const MAX_R = this._r / 3;
+    let craters = [];
+
+    // simple circle packing algorithm
+    for (let i = 0; i < num; i++) {
+      for (let j = 0; j < TRIES; j++) {
+        const r = random(MIN_R, MAX_R);
+        const rho = random(this._r - r * 2);
+        const theta = random(Math.PI * 2);
+
+        const x = rho * Math.cos(theta);
+        const y = rho * Math.sin(theta);
+
+        const free = craters.every((c) => dist(x, y, c.x, c.y) >= r + c.r);
+
+        if (!free) continue;
+
+        craters.push({ x, y, r });
+        break;
+      }
+    }
+
+    const fill = random(0.85, 0.9) * this._color;
+
+    ctx.save();
+    ctx.translate(this._size / 2, this._size / 2);
+    ctx.fillStyle = `rgb(${fill}, ${fill}, ${fill})`;
+    craters.forEach((c) => {
+      ctx.save();
+      ctx.translate(c.x, c.y);
+      ctx.beginPath();
+      ctx.arc(0, 0, c.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+    ctx.restore();
   }
 
   // moon orbit rotation
@@ -266,4 +339,8 @@ const random = (a, b) => {
 
 const random_interval = (average = 0.5, interval = 0.5) => {
   return random(average - interval, average + interval);
+};
+
+const dist = (x1, y1, x2, y2) => {
+  return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
 };
