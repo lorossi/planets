@@ -11,10 +11,10 @@ class Planet {
     // border of the rectangle containing the galaxy
     this._border = 0.4;
     // simplex noise scale
-    this._cloud_noise_scl = this._random(0.015, 0.005);
-    this._land_noise_scl = this._random(0.01, 0.0025);
+    this._cloud_noise_scl = random(0.015, 0.005);
+    this._land_noise_scl = random(0.01, 0.0025);
 
-    this._moons_number = this._random_int(1, 5);
+    this._moons_number = random_int(1, 5);
 
     // planet radius
     this._r = (this._size / 2) * (1 - this._border);
@@ -56,7 +56,7 @@ class Planet {
   // generate some moons for this planet
   _generateMoons() {
     for (let i = 0; i < this._moons_number; i++) {
-      const moon_channel = this._random(70, 200);
+      const moon_channel = random(70, 200);
       this._moons.push(new Moon(this._size * (1 - this._border), moon_channel));
     }
   }
@@ -70,9 +70,9 @@ class Planet {
     canvas.width = this._size;
     canvas.height = this._size;
     // pick colour for sea
-    const sea_hue = this._random(190, 255);
-    const sea_sat = this._random(80, 100);
-    const sea_val = this._random(40, 50);
+    const sea_hue = random(190, 255);
+    const sea_sat = random(80, 100);
+    const sea_val = random(40, 50);
     // draw a circle
     ctx.fillStyle = `hsl(${sea_hue}, ${sea_sat}%, ${sea_val}%)`;
     ctx.beginPath();
@@ -81,9 +81,9 @@ class Planet {
 
     // particles (cloud and land)
     const particles_scl = 1;
-    const cloud_threshold = this._random(0.25, 1);
-    const land_threshold = this._random(-0.75, 1);
-    const land_hue = this._random_int(180);
+    const cloud_threshold = random(0.25, 1);
+    const land_threshold = random(-0.75, 1);
+    const land_hue = random_int(180);
 
     for (let x = 0; x < this._size; x += particles_scl) {
       for (let y = 0; y < this._size; y += particles_scl) {
@@ -201,12 +201,12 @@ class Moon {
     this._color = color;
 
     // ratio between planet and moon size
-    const scl_factor = this._random(6, 20);
+    const scl_factor = random(8, 20);
     this._r = size / scl_factor;
     // some approximation for the orbit size
     this._orbit_size = size + 2 * this._r;
     // when should the planet start appearing or disappearing?
-    this._disappearing_edge = this._random(0.05, 0.1);
+    this._disappearing_edge = random(0.05, 0.1);
 
     this._theta = Math.random() * Math.PI * 2;
 
@@ -214,7 +214,7 @@ class Moon {
     this._x = 0;
     this._hidden = true;
     // number of orbits in the total animation duration
-    this._orbits = this._random_int(1, 3);
+    this._orbits = random_int(1, 3);
 
     // texturize
     this._pattern = null;
@@ -301,7 +301,7 @@ class Moon {
 
   // add craters to pattern
   _generateCraters(ctx) {
-    const num = this._random_int(0, 6);
+    const num = random_int(3, 8);
     const TRIES = 100;
     const MIN_R = this._r / 6;
     const MAX_R = this._r / 3;
@@ -310,15 +310,15 @@ class Moon {
     // simple circle packing algorithm
     for (let i = 0; i < num; i++) {
       for (let j = 0; j < TRIES; j++) {
-        const r = this._random(MIN_R, MAX_R);
-        const rho = this._random(this._r - r * 2);
-        const theta = this._random(Math.PI * 2);
+        const r = random(MIN_R, MAX_R);
+        const rho = random(this._r - r * 2);
+        const theta = random(Math.PI * 2);
 
         const x = rho * Math.cos(theta);
         const y = rho * Math.sin(theta);
 
         const free = craters.every(
-          (c) => this._dist(x, y, c.x, c.y) >= r + c.r * 1.5
+          (c) => dist(x, y, c.x, c.y) >= r + c.r * 1.5
         );
 
         if (!free) continue;
@@ -328,7 +328,7 @@ class Moon {
       }
     }
 
-    const fill = this._random(0.85, 0.9) * this._color;
+    const fill = this._color - random_int(5, 15);
 
     ctx.save();
     ctx.translate(this._size / 2, this._size / 2);
@@ -347,37 +347,5 @@ class Moon {
   // moon orbit rotation
   get theta() {
     return this._theta;
-  }
-
-  _random_int(a, b) {
-    if (a == undefined && b == undefined) {
-      a = 0;
-      b = 2;
-    } else if (b == undefined) {
-      b = a;
-      a = 0;
-    }
-
-    return Math.floor(Math.random() * (b - a)) + a;
-  }
-
-  _random(a, b) {
-    if (a == undefined && b == undefined) {
-      a = 0;
-      b = 2;
-    } else if (b == undefined) {
-      b = a;
-      a = 0;
-    }
-
-    return Math.random() * (b - a) + a;
-  }
-
-  _random_interval(average, interval) {
-    return this._random(average - interval, average + interval);
-  }
-
-  _dist(x1, y1, x2, y2) {
-    return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
   }
 }
