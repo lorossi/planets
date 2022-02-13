@@ -87,7 +87,7 @@ class Planet {
 class Moon {
   constructor(size, color) {
     // ratio between planet and moon size
-    const scl_factor = random_int(5, 40);
+    const scl_factor = random(8, 40);
     this._r = size / scl_factor;
     // some approximation for the orbit size
     this._orbit_size = size + 2 * this._r;
@@ -131,13 +131,17 @@ class Moon {
   show(ctx) {
     if (this._hidden) return;
 
+    // rounding for better performance
+    const x = Math.floor(this._x);
+    const r = Math.floor(this._current_r);
+
     ctx.save();
-    ctx.translate(this._x, 0);
+    ctx.translate(x, 0);
 
     ctx.fillStyle = this._fill;
     ctx.strokeStyle = "rgba(220, 220, 220, 0.5)"; // TODO improve this
     ctx.beginPath();
-    ctx.arc(0, 0, this._current_r, 0, Math.PI * 2);
+    ctx.arc(0, 0, r, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
 
