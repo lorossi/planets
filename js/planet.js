@@ -1,25 +1,21 @@
 class Planet {
   constructor(x, y, size) {
-    // top left corner position of the galaxy
+    // top left corner position of the planet
     this._x = x;
     this._y = y;
-    // size of the galaxy
+    // size of the planet
     this._size = size;
+
+    // planet radius - small adjustment for canvas texture
+    this._r = (this._size / 2) * 0.95;
     // init noise
     this._simplex = new SimplexNoise();
-
-    // border of the rectangle containing the galaxy
-    this._border = random(0.2, 0.7);
     // simplex noise scale
     this._cloud_noise_scl = random(0.015, 0.005);
     this._land_noise_scl = random(0.01, 0.0025);
 
-    this._moons_number = random_int(1, 5);
-
-    // planet radius
-    this._r = (this._size / 2) * (1 - this._border);
-
     // moons!
+    this._moons_number = random_int(1, 5);
     this._moons = [];
     this._generateMoons();
     // texturize
@@ -36,7 +32,7 @@ class Planet {
     ctx.translate(this._x, this._y);
 
     ctx.save();
-
+    // draw the planet texture
     ctx.fillStyle = this._pattern;
     ctx.fillRect(0, 0, this._size, this._size);
     ctx.restore();
@@ -44,7 +40,9 @@ class Planet {
     // draw the moons
     this._moons.forEach((m) => {
       ctx.save();
+      // moon drawing position is relative to the center of the planet
       ctx.translate(this._size / 2, this._size / 2);
+      // make angled orbits
       ctx.rotate(m.theta);
       m.show(ctx);
       ctx.restore();
@@ -53,11 +51,23 @@ class Planet {
     ctx.restore();
   }
 
+  // return position of the center of the planet
+  get center_pos() {
+    return { x: this._x + this._size / 2, y: this._y + this._size / 2 };
+  }
+
+  // return radius of the planet
+  // it's not the real radius but the "apparent" one
+  get r() {
+    return this._size / 2;
+  }
+
   // generate some moons for this planet
   _generateMoons() {
     for (let i = 0; i < this._moons_number; i++) {
-      const moon_channel = random(70, 200);
-      this._moons.push(new Moon(this._size * (1 - this._border), moon_channel));
+      // moon rgb channels color
+      const moon_rgb = random(80, 200);
+      this._moons.push(new Moon(this._size, moon_rgb));
     }
   }
 
@@ -101,8 +111,9 @@ class Planet {
       }
     }
 
+    // add a circle outside the planet to cover small pixel alignment issues
     ctx.strokeWidth = 4;
-    ctx.strokeStyle = "rgb(255, 255, 255, 0.5)"; // TODO improve this
+    ctx.strokeStyle = "rgb(255, 255, 255, 0.5)";
     ctx.beginPath();
     ctx.arc(this._size / 2, this._size / 2, this._r, 0, Math.PI * 2);
     ctx.stroke();
@@ -111,6 +122,7 @@ class Planet {
     this._pattern = ctx.createPattern(canvas, "no-repeat");
   }
 
+  // check if a point is inside the planet
   _inside(x, y) {
     const xx = x - this._size / 2;
     const yy = y - this._size / 2;
@@ -168,30 +180,6 @@ class Planet {
       frequency *= lacunarity;
     }
     return n;
-  }
-
-  _random_int(a, b) {
-    if (a == undefined && b == undefined) {
-      a = 0;
-      b = 2;
-    } else if (b == undefined) {
-      b = a;
-      a = 0;
-    }
-
-    return Math.floor(Math.random() * (b - a)) + a;
-  }
-
-  _random(a, b) {
-    if (a == undefined && b == undefined) {
-      a = 0;
-      b = 2;
-    } else if (b == undefined) {
-      b = a;
-      a = 0;
-    }
-
-    return Math.random() * (b - a) + a;
   }
 }
 
@@ -254,6 +242,7 @@ class Moon {
     ctx.save();
     ctx.translate(-d_pos + x, -d_pos);
 
+    // if the moon is near the edge of the orbit, its size must be shrunk
     if (this._current_size < 1) {
       ctx.translate(d_pos, d_pos);
       ctx.scale(this._current_size, this._current_size);
@@ -264,14 +253,6 @@ class Moon {
     ctx.fillRect(0, 0, this._size, this._size);
 
     ctx.restore();
-  }
-
-  _easeIn(x) {
-    return 1 - Math.cos((x * Math.PI) / 2);
-  }
-
-  _easeOut(x) {
-    return Math.sin((x * Math.PI) / 2);
   }
 
   _generatePattern() {
@@ -342,6 +323,16 @@ class Moon {
       ctx.restore();
     });
     ctx.restore();
+  }
+
+  _easeIn(x) {
+    // simple cos easing
+    return 1 - Math.cos((x * Math.PI) / 2);
+  }
+
+  _easeOut(x) {
+    // simple sin easing
+    return Math.sin((x * Math.PI) / 2);
   }
 
   // moon orbit rotation
