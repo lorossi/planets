@@ -1,12 +1,12 @@
 class Sketch extends Engine {
   preload() {
     this._duration = 600; // animation duration
+    this._recording = true;
   }
 
   setup() {
     this._stars_num = random_int(200, 300); // number of stars
     this._planets = [];
-    const planet_scl = this.width / this._columns;
 
     // simple circle packing to fill the canvas
     const TRIES = 1e4;
@@ -43,7 +43,10 @@ class Sketch extends Engine {
       this._stars.push(new Star(x, y, this._duration));
     }
 
-    this._start = this.frameCount;
+    if (this._recording) {
+      this._capturer = new CCapture({ format: "png" });
+      this._capturer.start();
+    }
   }
 
   draw() {
@@ -56,6 +59,15 @@ class Sketch extends Engine {
 
     this._planets.forEach((p) => p.update(percent));
     this._planets.forEach((p) => p.show(this.ctx));
+
+    if (this._recording) {
+      this._capturer.capture(this.canvas);
+      if (this.frameCount == this._duration && this.frameCount > 0) {
+        this._capturer.stop();
+        this._capturer.save();
+        this._recording = false;
+      }
+    }
   }
 
   click() {
