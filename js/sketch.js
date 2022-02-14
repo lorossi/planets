@@ -1,7 +1,7 @@
 class Sketch extends Engine {
   preload() {
     this._duration = 600; // animation duration
-    this._recording = true;
+    this._recording = false;
   }
 
   setup() {
