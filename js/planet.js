@@ -139,9 +139,9 @@ class Planet {
 
   _generateClouds(x, y, scl, threshold, ctx) {
     // clouds noise parameters
-    const cloud_octaves = 3;
-    const cloud_persistence = 0.85;
-    const cloud_lacunarity = 2.2;
+    const cloud_octaves = 4;
+    const cloud_persistence = 0.6;
+    const cloud_lacunarity = 2.5;
 
     const cloud = this._generateNoise(
       x * this._cloud_noise_scl,
@@ -284,8 +284,8 @@ class Moon {
 
     // draw a circle
     ctx.fillStyle = `rgb(${this._color}, ${this._color}, ${this._color})`;
-    ctx.strokeWidth = 4;
-    ctx.strokeStyle = "rgba(220, 220, 220, 0.5)"; // TODO improve this
+    ctx.strokeWidth = 5;
+    ctx.strokeStyle = "rgba(220, 220, 220, 0.75)"; // TODO improve this
 
     ctx.beginPath();
     ctx.arc(this._size / 2, this._size / 2, this._r, 0, Math.PI * 2);

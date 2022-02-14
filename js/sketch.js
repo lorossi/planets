@@ -1,11 +1,11 @@
 class Sketch extends Engine {
   preload() {
     this._duration = 600; // animation duration
-    this._columns = 3; // number of columns of planets
-    this._stars_num = 250;
   }
 
   setup() {
+    this._columns = random_int(2, 6); // number of columns of planets
+    this._stars_num = random_int(200, 300); // number of stars
     this._planets = [];
     const planet_scl = this.width / this._columns;
 
@@ -39,5 +39,9 @@ class Sketch extends Engine {
 
     this._planets.forEach((p) => p.update(percent));
     this._planets.forEach((p) => p.show(this.ctx));
+  }
+
+  click() {
+    this.setup();
   }
 }
