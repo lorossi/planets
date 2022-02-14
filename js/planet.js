@@ -9,7 +9,7 @@ class Planet {
     this._simplex = new SimplexNoise();
 
     // border of the rectangle containing the galaxy
-    this._border = 0.4;
+    this._border = random(0.2, 0.7);
     // simplex noise scale
     this._cloud_noise_scl = random(0.015, 0.005);
     this._land_noise_scl = random(0.01, 0.0025);
