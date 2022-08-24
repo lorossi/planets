@@ -10,7 +10,7 @@ class Sketch extends Engine {
 
     // simple circle packing to fill the canvas
     const TRIES = 1e4;
-    const MIN_SCL = this.width / 20;
+    const MIN_SCL = this.width / 15;
     const MAX_SCL = this.width / 3;
     const NUM = random_int(4, 12);
     const BORDER = 0.75;

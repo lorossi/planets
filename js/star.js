@@ -22,7 +22,7 @@ class Star {
     ctx.translate(this._x, this._y);
     ctx.translate(this._rho, 0);
     ctx.rotate(this._theta);
-    ctx.fillStyle = "#FFFFF6";
+    ctx.fillStyle = "#FFF8E7";
     ctx.beginPath();
     ctx.arc(0, 0, this._current_r, 0, Math.PI * 2);
     ctx.fill();

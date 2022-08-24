@@ -37,6 +37,15 @@ class Planet {
     ctx.fillRect(0, 0, this._size, this._size);
     ctx.restore();
 
+    ctx.save();
+    ctx.translate(this._size / 2, this._size / 2);
+    ctx.strokeWidth = 3;
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
+    ctx.beginPath();
+    ctx.arc(0, 0, this._r, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
     // draw the moons
     this._moons.forEach((m) => {
       ctx.save();
@@ -309,7 +318,7 @@ class Moon {
       }
     }
 
-    const fill = this._color - random_int(5, 15);
+    const fill = Math.max(0, this._color - random_int(10, 20));
 
     ctx.save();
     ctx.translate(this._size / 2, this._size / 2);
