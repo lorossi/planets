@@ -13,9 +13,12 @@ Finally, in the background there is a large amount of stars, slowly blinking aro
 I picked their color to be the same as the [cosmic latte](https://en.wikipedia.org/wiki/Cosmic_latte), the average color of the universe.
 Despite being really wrong from a scientific point of view, I wanted to give to this video something slightly realistic.
 
+As you can see, the planets are not attracted to each other, are not moving and their moons have a strange-looking circular orbit.
+This is because I wanted to create something "cute" to look at, rather than something "realistic".
+
 As always, you can check out the rendered output on my [Instagram profile](https://instagram.com/lorossi97) or you can see some gifs on this very page, just a few lines below.
 
-If you are feeling it you can also [try it out here]().
+If you are feeling it you can also [try it out here](https://lorenzoros.si/planets).
 
 ## Output
 
@@ -24,6 +27,7 @@ If you are feeling it you can also [try it out here]().
 ![output-2](output/2/output.gif)
 
 ![output-3](output/3/output.gif)
+
 ## Credits
 
 This project is released under MIT License.
