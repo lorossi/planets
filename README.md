@@ -16,7 +16,7 @@ Despite being really wrong from a scientific point of view, I wanted to give to 
 As you can see, the planets are not attracted to each other, are not moving and their moons have a strange-looking circular orbit.
 This is because I wanted to create something "cute" to look at, rather than something "realistic".
 
-As always, you can check out the rendered output on my [Instagram profile](https://instagram.com/lorossi97) or you can see some gifs on this very page, just a few lines below.
+As always, you can check out the rendered output on my [Instagram profile](https://www.instagram.com/p/CijwZCEMBkI/) or you can see some gifs on this very page, just a few lines below.
 
 If you are feeling it you can also [try it out here](https://lorenzoros.si/planets).
 
